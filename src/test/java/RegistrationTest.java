@@ -27,7 +27,7 @@ public class RegistrationTest {
     }
 
     @Test
-    void shouldRegisterByAccountNumber() {
+    void shouldOrderCardDelivery() {
         String planningDate = generateDate(4, "dd.MM.yyyy");
         $("[data-test-id='city'] input").setValue("Москва");
         $("[data-test-id='date'] input").click();
