@@ -6,7 +6,6 @@ import org.openqa.selenium.Keys;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -33,35 +32,35 @@ public class RegistrationTest {
         $("[data-test-id='name'] input").setValue("Голубева Екатерина");
         $("[data-test-id='phone'] input").setValue("+79117115611");
         $("[data-test-id='agreement']").click();
-        $$("button").filter(Condition.visible).find(Condition.text("Забронировать")).click();
+        $$("button").find(Condition.text("Забронировать")).click();
         $(withText("Успешно!")).should(Condition.visible, Duration.ofSeconds(15));
         $(".notification__content").should(Condition.text("Встреча успешно забронирована на " + planningDate));
     }
 
     @Test
-    void shouldOrderCardDeliveryAcross7Days() {
-        LocalDate targetDate = LocalDate.now().plusDays(7);
+    void shouldOrderCardDeliveryAcross3Days() {
+        LocalDate defaultCalendarDate = LocalDate.now().plusDays(3);
+        LocalDate targetDate = defaultCalendarDate;
         String planningDate = targetDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         int targetDay = targetDate.getDayOfMonth();
         int targetMonth = targetDate.getMonthValue();
-        int currentMonth = LocalDate.now().getMonthValue();
+        int defaultMonth = defaultCalendarDate.getMonthValue();
 
         $("[data-test-id='city'] input").click();
         $("[data-test-id='city'] input").press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
-        //$(".input__control").sendKeys("Ка");
         $("[data-test-id='city'] .input__control").sendKeys("Ка");
-        $(byText("Махачкала")).shouldBe(Condition.visible, Duration.ofSeconds(15)).click();
+        $(".input__popup").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $$(".menu-item__control").findBy(Condition.text("Махачкала")).click();
         $("[data-test-id=date] button.icon-button").click();
         sleep(1000);
-        if (targetMonth == currentMonth) {
-        } else {
+        if (targetMonth != defaultMonth) {
             $(".calendar__arrow_direction_right[data-step='1']").click();
         }
-        $$(".calendar__day").filter(Condition.visible).findBy(Condition.text(String.valueOf(targetDay))).click();
+        $$(".calendar__day").findBy(Condition.text(String.valueOf(targetDay))).click();
         $("[data-test-id='name'] input").setValue("Голубева Екатерина");
         $("[data-test-id='phone'] input").setValue("+79117115611");
         $("[data-test-id='agreement']").click();
-        $$("button").filter(Condition.visible).find(Condition.text("Забронировать")).click();
+        $$("button").find(Condition.text("Забронировать")).click();
         $(withText("Успешно!")).should(Condition.visible, Duration.ofSeconds(15));
         $(".notification__content").should(Condition.text("Встреча успешно забронирована на " + planningDate));
     }
